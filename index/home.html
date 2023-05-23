@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <link rel="stylesheet" href="./css/home.css">
+    <script src="./js/jquery.js"></script>
+    <script src="./layui/layui-v2.6.8/layui/layui.js"></script>
+
+</head>
+
+<body>
+    <div class="top">
+        <div class="ava">
+            <div class="box">
+                <img src="./img/8534.jpg_wh1200.jpg" alt="">
+            </div>
+        </div>
+        <div class="nav">后台管理系统</div>
+        <div class="bye"><button class="exit">退出系统</button></div>
+    </div>
+
+    <div class="flex">
+        <div class="sidebar">
+            <div class="home"><a href="./home.html">首页</a></div>
+            <div class="personal"><a href="./user.html">用户管理</a></div>
+            <div class="article"><a href="./article.html">文章管理</a></div>
+        </div>
+
+
+        <div class="right">
+
+            <input type="file" id="file">
+
+
+
+            <!-- 卡片区域 -->
+
+
+        </div>
+
+
+
+
+    </div>
+
+    <script src="./js/baseAPI.js"></script>
+    <script>
+        // 退出系统
+        $('.exit').on('click', () => {
+            localStorage.removeItem('token')
+            location.href = "./index.html"
+        })
+
+    </script>
+    <script type="text/javascript">
+
+        function upload_file() {
+            var formData = new FormData();//创建一个新的FormData对象
+
+            formData.append("file", $("#file")[0].files[0]);
+            //说明：$("#file")：获取的是input对象
+            //$("#file")[0]：获取<input>标签
+            //$("#file")[0].files[0]：获取上传的文件
+            //formData.append：将文件添加到formdata对象中
+            $.ajax({
+                url: "/my/update/avatar",
+                type: "POST",
+                data: formData,//提交文件对象
+                processData: false,  // 不处理数据
+                contentType: false,   // 不设置内容类型
+                success: function (data) {
+                    console.log(data);
+                }
+            });
+        }
+    </script>
+
+
+</body>
+
+</html>

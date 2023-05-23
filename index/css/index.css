@@ -1,0 +1,87 @@
+body {
+    width: 100vh;
+    height: 100vh;
+    background-image: url('../img/veer-425240664.jpg');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+#fd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background-color: rgba(0, 0, 0, .3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: visible;
+}
+
+#fd h2 {
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    color: chocolate;
+}
+
+#fd .username,
+.password {
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+#fd div input {
+    width: 150px;
+    height: 30px;
+}
+
+#fd button {
+    width: 150px;
+    height: 40px;
+    background-color: rgb(105, 129, 235);
+    border: 0;
+
+}
+
+
+.reg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background-color: rgba(0, 0, 0, .3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: hidden;
+}
+
+.reg div {
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+
+.reg div input {
+    width: 150px;
+    height: 30px;
+}
+
+.reg div button {
+    width: 150px;
+    height: 40px;
+
+}

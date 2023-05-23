@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="./css/user.css">
+    <script src="./js/jquery.js"></script>
+</head>
+
+<body>
+
+    <div class="top">
+        <div class="ava">
+            <div class="box">
+                <img src="./img/8534.jpg_wh1200.jpg" alt="">
+            </div>
+        </div>
+        <div class="nav">后台管理系统</div>
+        <div class="bye"><button class="exit">退出系统</button></div>
+    </div>
+
+    <div class="flex">
+        <div class="sidebar">
+            <div class="home">
+                <a href="./home.html">首页</a>
+            </div>
+            <div class="personal"><a href="./user.html">用户管理</a></div>
+            <div class="article"><a href="./article.html">文章管理</a></div>
+
+        </div>
+
+
+        <div class="right">
+            <div class="info">
+                <div class="scrsh">
+                    <input type="text" placeholder="请输入id查找用户信息" id="look_for"><button class="find">查找</button>
+                    <button class="reset">重置</button>
+                </div>
+
+                <div class="operation">
+                    <button class="new_user">添加用户</button>
+                    <button class="change">更新用户信息</button>
+                    <button class="del">删除用户</button>
+
+                </div>
+            </div>
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <td>id</td>
+                        <td>username</td>
+                        <td>password</td>
+                        <td>nickname</td>
+                        <td>user_pic</td>
+                        <td>email</td>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+
+            </table>
+
+            <!-- 分页 -->
+            <div id="test">
+                <!-- <button>上一页</button> -->
+
+                <!-- <input type="button" value="1"> -->
+                <!-- <button>下一页</button> -->
+            </div>
+
+            <!-- 添加 -->
+            <div class="add">
+                <div class="title">
+                    <h4>添加用户</h4>
+                    <div class="close">X</div>
+                </div>
+                <div class="uName">姓名: <input type="text" class="uName_" placeholder="请输入数字或字母组成的账号"> </div>
+                <div class="pword">密码: <input type="text" class="pword_" placeholder="请输入数字或字母组成的账号"> </div>
+                <div class="eml">邮箱: <input type="email" class="eml_" placeholder="请输入邮箱格式"> </div>
+
+                <div class="present"><button class="submit">提交</button></dv>
+                </div>
+            </div>
+
+
+
+            <!-- 更新 -->
+            <div class="update">
+                <div class="update_title">
+                    <h4>更新用户</h4>
+                    <div class="close_up">X</div>
+                </div>
+
+                <div class="form">
+                    <div>请输入更新用户id: <input type="text" class="up_id"> </div>
+                    <div>姓名：<input type="text" class="up_username"> </div>
+                    <div>密码：<input type="text" class="up_password"></div>
+                    <div>昵称：<input type="text" class="up_nickname"></div>
+
+                    <div>邮箱：<input type="email" class="up_email"></div>
+                    <div><button class="submit_up">提交</button></div>
+                </div>
+            </div>
+            <!-- 删除 -->
+            <div class="delete">
+                <div class="delete_title">
+                    <h4>删除用户</h4>
+                    <div class="del_close">X</div>
+                </div>
+
+                <form action="">
+                    <div>请输入要删除用户的ID: <input type="text" class="del_id"> </div>
+                    <div><button class="del_submit">提交</button></div>
+                </form>
+            </div>
+        </div>
+
+        <script src="./js/baseAPI.js"></script>
+
+        <script>
+
+            window.onload = () => {
+                // let name = localStorage.getItem('token')
+                // console.log(name);
+                let personal = document.querySelector('.personal')
+                personal.style.backgroundColor = '#e69d2f'
+                $(() => {
+
+
+                    // 初始化页面表格数据
+                    $.ajax({
+                        method: 'get',
+                        url: '/my/userinfo',
+                        success: function (res) {
+                            // console.log(res);
+
+                            let test = document.querySelector('#test')
+
+
+                            // 分页功能
+                            // 总页数
+                            let totality = (res.data.length) / 5
+                            //2
+                            totality = Math.ceil(totality)
+                            // console.log(totality);
+                            // 页数
+
+                            // 每页条数
+                            let pagesize = res.data.slice(0, 5)
+
+                            function fd() {
+                                if (res.status == 0) {
+
+                                    for (let i = 0; i < totality; i++) {
+                                        // console.log(1);
+                                        let input = document.createElement('input')
+                                        input.type = "button"
+                                        input.value = i + 1
+                                        input.setAttribute('index', i + 1)
+                                        test.append(input)
+                                    }
+                                }
+
+                                // 点击事件
+                                let btn = document.querySelector('#test').children
+                                // console.log(btn);
+
+                                for (let a = 0; a < btn.length; a++) {
+                                    btn[a].addEventListener('click', function () {
+                                        let start = (this.getAttribute('index') - 1) * 5
+                                        let end = this.getAttribute('index') * 5
+                                        let count = res.data.slice(start, end)
+                                        let arr = ''
+                                        let tbody = document.querySelector('tbody')
+                                        for (let i = 0; i < count.length; i++) {
+                                            // console.log(res.data[i]);
+                                            arr +=
+                                                `<tr>
+                                                <td>${count[i].id}</td>
+                                                <td>${count[i].username}</td>
+                                                <td>${count[i].password}</td>
+                                                <td>${count[i].nickname}</td>
+                                                <td>${count[i].user_pic}</td>
+                                                <td>${count[i].email}</td>
+                                                </tr>`
+
+                                        }
+                                        tbody.innerHTML = arr
+                                    })
+                                }
+
+                            }
+
+                            fd()
+                            function page() {
+
+                                let arr = ''
+                                let tbody = document.querySelector('tbody')
+                                for (let i = 0; i < pagesize.length; i++) {
+                                    // console.log(res.data[i]);
+                                    arr +=
+                                        `<tr>
+                                    <td>${pagesize[i].id}</td>
+                                    <td>${pagesize[i].username}</td>
+                                    <td>${pagesize[i].password}</td>
+                                    <td>${pagesize[i].nickname}</td>
+                                    <td>${pagesize[i].user_pic}</td>
+                                    <td>${pagesize[i].email}</td>
+                                    </tr>`
+
+                                }
+
+                                tbody.innerHTML = arr
+
+                            }
+
+
+
+                            page()
+
+
+                        }
+                    })
+
+                    // 根据id查找用户
+                    $('.find').on('click', () => {
+                        let look_for = document.querySelector('#look_for')
+
+                        // console.log(look_for);
+                        // console.log(sessionStorage.getItem('token'))
+                        $.ajax({
+                            method: 'post',
+                            url: '/my/lookuser',
+                            data: { id: look_for.value },
+                            success: (res) => {
+                                // console.log(res);
+                                if (res.status !== 0) {
+                                    alert('用户id不存在')
+                                    location.reload()
+                                }
+
+
+                                let arr = `<tr>
+                                    <td>${res.data.id}</td>
+                                    <td>${res.data.username}</td>
+                                    <td>${res.data.password}</td>
+                                    <td>${res.data.nickname}</td>
+                                    <td>${res.data.user_pic}</td>
+                                    <td>${res.data.email}</td>
+                                    </tr>`
+
+                                $('tbody').html(arr)
+                            }
+                        })
+                    })
+
+                    // 重置刷新页面按钮
+                    $('.reset').on('click', () => {
+                        location.reload()
+                    })
+
+                    // 添加用户
+                    $('.new_user').on('click', () => {
+                        let add = document.querySelector('.add')
+                        let close = document.querySelector('.close')
+
+                        close.addEventListener('click', () => {
+                            add.style.display = 'none'
+                        })
+                        add.style.display = 'block'
+
+
+                        $('.submit').on('click', () => {
+                            let username = document.querySelector('.uName_')
+                            let password = document.querySelector('.pword_')
+                            let email = document.querySelector('.eml_')
+                            // console.log(username.value);
+
+                            $.ajax({
+                                method: 'post',
+                                url: '/my/adduser',
+                                data: { username: username.value, password: password.value, email: email.value },
+                                success: (res) => {
+
+                                    if (res.status !== 0) {
+                                        alert('添加用户失败！')
+                                        location.reload()
+
+                                    } else {
+
+                                        alert('添加用户成功！')
+                                        location.reload()
+                                        let arr = `
+                                                <tr>
+                                                <td>${username.value}</td>
+                                                <td>${password.value}</td>
+                                                <td>${email.value}</td>
+                                                </tr>`
+                                        $('tbody').push(arr)
+
+
+                                    }
+
+
+                                }
+                            })
+
+                        })
+
+                    })
+
+
+                    // 更新用户
+                    $('.change').on('click', () => {
+
+                        let update = document.querySelector('.update')
+                        let close_up = document.querySelector('.close_up')
+                        close_up.addEventListener('click', () => {
+                            update.style.display = 'none'
+                        })
+                        update.style.display = 'block'
+
+                        $('.submit_up').on('click', () => {
+                            let up_id = document.querySelector('.up_id')
+                            let up_username = document.querySelector('.up_username')
+                            let up_password = document.querySelector('.up_password')
+                            let up_nickname = document.querySelector('.up_nickname')
+
+                            let up_email = document.querySelector('.up_email')
+                            $.ajax({
+                                method: 'post',
+                                url: '/my/userinfo',
+                                data: { username: up_username.value, password: up_password.value, nickname: up_nickname.value, email: up_email.value, id: up_id.value },
+                                success: (res) => {
+                                    if (res.status !== 0) return alert('更新失败！')
+                                    alert('更新用户信息成功！')
+                                    location.reload()
+                                }
+                            })
+                        })
+                    })
+
+
+                    // 根据id删除用户信息
+                    $('.del').on('click', () => {
+
+                        const delet = document.querySelector('.delete')
+                        const del_close = document.querySelector('.del_close')
+                        del_close.addEventListener('click', () => {
+                            delet.style.display = 'none'
+                        })
+                        delet.style.display = 'block'
+
+                        $('.del_submit').on('click', () => {
+                            let del_id = document.querySelector('.del_id')
+
+                            $.ajax({
+                                method: 'post',
+                                url: '/my/deleteuser',
+                                data: { id: del_id.value },
+                                success: (res) => {
+
+                                    if (res.status == 0) {
+
+                                        alert('删除用户成功！')
+                                        location.reload()
+                                    } else {
+                                        alert('删除用户失败！')
+                                        location.reload()
+                                    }
+
+
+                                }
+                            })
+                        })
+                    })
+
+
+                    // 退出系统
+                    $('.exit').on('click', () => {
+                        localStorage.removeItem('token')
+                        location.href = "./index.html"
+                    })
+
+
+
+
+
+
+                })
+
+            }
+
+
+
+        </script>
+
+
+</body>
+
+</html>

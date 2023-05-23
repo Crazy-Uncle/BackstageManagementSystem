@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章管理</title>
+    <link rel="stylesheet" href="./css/article.css">
+    <script src="./js/jquery.js"></script>
+</head>
+
+<body>
+
+    <div class="top">
+        <div class="ava">
+            <div class="box">
+                <img src="./img/8534.jpg_wh1200.jpg" alt="">
+            </div>
+        </div>
+        <div class="nav">后台管理系统</div>
+        <div class="bye"><button class="exit">退出系统</button></div>
+    </div>
+
+    <div class="flex">
+        <div class="sidebar">
+            <div class="home">
+                <a href="./home.html">首页</a>
+            </div>
+            <div class="personal"><a href="user.html">用户管理</a></div>
+            <div class="article"><a href="article.html">文章管理</a></div>
+
+        </div>
+
+
+        <div class="right">
+            <div class="info">
+                <div class="scarsh">
+                    <input type="text" placeholder="请输入id查找文章" class="s_id"><button class="s_look"
+                        type="submit">搜索</button>
+                    <button class="reset">重置</button>
+                </div>
+                <div class="operation">
+                    <button class="add_book">添加文章</button>
+                    <button class="del_book">删除文章</button>
+                    <button class="up_book">更新文章</button>
+
+                </div>
+            </div>
+
+
+            <table border="1">
+                <thead>
+                    <tr>
+                        <td>id</td>
+                        <td>name</td>
+                        <td>alias</td>
+                        <td>is_delete</td>
+
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+
+            <div class="add">
+                <div class="title">
+                    <h4>添加文字</h4>
+                    <div class="add_close">X</div>
+                </div>
+                <div class="a_name">文章名称: <input type="text" class="a_name_input" placeholder="请输入名称"> </div>
+                <div class="a_alias">文章别名: <input type="text" class="a_alias_input" placeholder="请输入别名"> </div>
+                <!-- <div class="a_is_del">状态: <input type="text" class="a_is_delete" placeholder="0表示存在，1表示不存在"> </div> -->
+
+                <div class="present"><button class="add_submit">提交</button></dv>
+                </div>
+            </div>
+
+            <div class="delete">
+                <div class="delete_title">
+                    <h4>删除用户</h4>
+                    <div class="del_close">X</div>
+                </div>
+                <div class="form">
+                    <div>请输入要删除用户的ID: <input type="text" class="del_id"> </div>
+                    <div><button class="del_submit">提交</button></div>
+                </div>
+            </div>
+
+
+
+            <div class="update">
+                <div class="update_title">
+                    <h4>更新用户</h4>
+                    <div class="close_up">X</div>
+                </div>
+
+                <div class="form">
+                    <div>id:<input type="text" class="up_id"></div>
+                    <div>名称: <input type="text" class="up_name"> </div>
+                    <div>别名:<input type="text" class="up_alias"> </div>
+
+
+
+                    <div><button class="submit_up">提交</button></div>
+                </div>
+            </div>
+
+        </div>
+
+        <script src="./js/baseAPI.js"></script>
+
+        <script>
+            window.onload = () => {
+
+                let name = localStorage.getItem('token')
+                localStorage.setItem('token', name)
+
+                let article = document.querySelector('.article')
+                article.style.backgroundColor = '#e69d2f'
+
+
+                $(function () {
+
+
+
+                    // 初始化数据列表
+                    $.ajax({
+                        method: 'get',
+                        url: '/my/article/cates',
+                        success: (res) => {
+                            // 
+                            let arr = ''
+                            for (let i = 0; i < res.data.length; i++) {
+
+                                arr += `<tr>
+                                <td>${res.data[i].id}</td>
+                                <td>${res.data[i].name}</td>
+                                <td>${res.data[i].alias}</td>
+                                <td>${res.data[i].is_delete}</td>
+                                </tr>`
+                            }
+                            $('tbody').html(arr)
+                        }
+                    })
+
+                    // 根据id查找相关文章
+                    $('.s_look').on('click', () => {
+
+                        let s_id = document.querySelector('.s_id')
+
+                        let arr = ''
+
+                        $.ajax({
+                            method: 'get',
+                            url: `/my/article/cates/${s_id.value}`,
+
+                            success: (res) => {
+                                arr = `<tr>
+                                <td>${res.data.id}</td>
+                                <td>${res.data.name}</td>
+                                <td>${res.data.alias}</td>
+                                <td>${res.data.is_delete}</td>
+                                </tr>`
+
+                                $('tbody').html(arr)
+                            }
+                        })
+
+
+                    })
+
+                    // 重置
+                    $('.reset').on('click', function () {
+                        location.reload()
+                    })
+
+
+                    // 添加文章
+                    $('.add_book').on('click', () => {
+                        let add = document.querySelector('.add')
+                        let add_close = document.querySelector('.add_close')
+                        add_close.addEventListener('click', () => {
+                            add.style.display = 'none'
+                        })
+                        add.style.display = 'block'
+
+                        $('.add_submit').on('click', () => {
+                            let a_name_input = document.querySelector('.a_name_input')
+                            let a_alias_input = document.querySelector('.a_alias_input')
+                            // let a_is_delete = document.querySelector('.a_is_delete')
+                            $.ajax({
+                                method: 'post',
+                                url: '/my/article/addcates',
+                                data: { name: a_name_input.value, alias: a_alias_input.value },
+                                success: (res) => {
+                                    console.log(res);
+                                    if (res.status == 0) {
+                                        alert('添加成功')
+                                        location.reload()
+
+                                    }
+                                    return alert('添加失败：名称或别名重复')
+
+                                }
+                            })
+                        })
+                    })
+
+
+                    // 根据id删除用户信息
+                    $('.del_book').on('click', () => {
+                        let dt = document.querySelector('.delete')
+                        let del_close = document.querySelector('.del_close')
+
+                        del_close.addEventListener('click', function () {
+                            dt.style.display = 'none'
+                        })
+
+                        dt.style.display = 'block'
+
+                        $('.del_submit').on('click', () => {
+                            let del_id = document.querySelector('.del_id')
+
+                            $.ajax({
+                                method: 'get',
+                                url: `/my/article/deletecate/${del_id.value}`,
+                                success: function (res) {
+                                    if (res.status == 0) {
+                                        alert('删除成功')
+                                        location.reload()
+                                    } else {
+                                        return alert('删除用户失败')
+                                    }
+
+
+                                }
+                            })
+                        })
+                    })
+
+
+                    // 更新文章数据信息
+                    $('.up_book').on('click', function () {
+                        let update = document.querySelector('.update')
+                        let close_up = document.querySelector('.close_up')
+                        close_up.addEventListener('click', () => {
+                            update.style.display = 'none'
+                        })
+
+                        update.style.display = 'block'
+
+                        $('.submit_up').on('click', () => {
+                            let up_id = document.querySelector('.up_id')
+                            let up_name = document.querySelector('.up_name')
+                            let up_alias = document.querySelector('.up_alias')
+
+                            $.ajax({
+                                method: 'post',
+                                url: '/my/article/updatecate',
+                                data: { id: up_id.value, name: up_name.value, alias: up_alias.value },
+                                success: function (res) {
+                                    if (res.status == 0) {
+                                        alert('更新用户信息成功')
+                                        location.reload()
+                                    } else {
+                                        return alert('更新失败')
+                                    }
+
+                                }
+                            })
+                        })
+                    })
+
+                    // 退出系统
+                    $('.exit').on('click', () => {
+                        localStorage.removeItem('token')
+                        location.href = "./index.html"
+                    })
+                })
+            }
+
+
+
+        </script>
+</body>
+
+</html>
